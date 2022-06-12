@@ -3,17 +3,23 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const compression = require("compression");
+const helmet = require("helmet");
+
+const mongoDb = process.env.MONGODB_URI;
+mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "mongo connection error"));
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const apiRouter = require("./routes/api");
 
-const compression = require("compression");
-const helmet = require("helmet");
-
 const app = express();
 
-// view engine setup
+// view engine setup - TODO: Remove
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
