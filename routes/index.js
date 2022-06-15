@@ -3,8 +3,8 @@ const router = express.Router();
 const { verifyToken } = require("../middleware/verifyToken");
 
 /* GET home page. */
-router.get("/", verifyToken, function (req, res, next) {
-  res.json({ message: "Token verification works" });
+router.get("/", function (req, res, next) {
+  res.json({ message: "Nothing here" });
 });
 
 module.exports = router;
