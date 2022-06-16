@@ -37,13 +37,30 @@ exports.postsPOST = [
 ];
 
 exports.singlePostGET = (req, res, next) => {
-  res.send("Single post GET");
+  Post.findById(req.params.postid)
+    .populate("author", "firstName lastName email -_id")
+    .exec((err, post) => {
+      if (err) return next(err);
+      res.json(post);
+    });
 };
 
-exports.singlePostPUT = (req, res, next) => {
-  res.send("Single post PUT");
+exports.singlePostPUT = async (req, res, next) => {
+  const post = await Post.findById(req.params.postid);
+  post.title = req.body.title;
+  post.article = req.body.article;
+  post.author = req.token.user.id;
+  post.published = req.body.published;
+  if (req.body.poster) post.poster = req.body.poster;
+  post.save((err, savedPost) => {
+    if (err) return next(err);
+    res.json(savedPost);
+  });
 };
 
 exports.singlePostDELETE = (req, res, next) => {
-  res.send("Single post DELETE");
+  Post.findByIdAndDelete(req.params.postid).exec((err, post) => {
+    if (err) return next(err);
+    res.json(post);
+  });
 };
