@@ -1,10 +1,40 @@
+const Post = require("../models/post");
+const { body, validationResult } = require("express-validator");
+
 exports.postsGET = (req, res, next) => {
-  res.send("posts GET");
+  Post.find({})
+    .populate("author", "firstName lastName email -_id")
+    .sort({ date: "desc" })
+    .exec((err, data) => {
+      if (err) return next(err);
+      res.json(data);
+    });
 };
 
-exports.postsPOST = (req, res, next) => {
-  res.send("posts POST");
-};
+exports.postsPOST = [
+  // Validate
+  body("title", "Title cannot be empty").trim().isLength({ min: 1 }),
+  body("article", "Article cannot be empty").trim().isLength({ min: 1 }),
+  body("published").exists(),
+
+  // Handle request
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.json(errors.array());
+    const post = new Post({
+      title: req.body.title,
+      poster: req.body.poster || "",
+      article: req.body.article,
+      author: req.token.user.id,
+      date: new Date(Date.now()),
+      published: req.body.published,
+    });
+    post.save((err, savedPost) => {
+      if (err) return next(err);
+      res.json(savedPost);
+    });
+  },
+];
 
 exports.singlePostGET = (req, res, next) => {
   res.send("Single post GET");
