@@ -1,6 +1,7 @@
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 exports.loginPOST = [
   passport.authenticate("local", { session: false }),
@@ -13,3 +14,13 @@ exports.loginPOST = [
     });
   },
 ];
+
+exports.verifyUser = (req, res, next) => {
+  // verifyToken middleware sets req.token.user if token is valid
+  User.findById(req.token.user.id)
+    .select("firstName lastName email -_id")
+    .exec((err, user) => {
+      if (err) return next(err);
+      return res.json(user);
+    });
+};
