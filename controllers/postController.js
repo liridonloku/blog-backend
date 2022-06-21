@@ -2,6 +2,16 @@ const Post = require("../models/post");
 const { body, validationResult } = require("express-validator");
 
 exports.postsGET = (req, res, next) => {
+  Post.find({ published: "true" })
+    .populate("author", "firstName lastName email -_id")
+    .sort({ date: "desc" })
+    .exec((err, data) => {
+      if (err) return next(err);
+      res.json(data);
+    });
+};
+
+exports.allPostsGET = (req, res, next) => {
   Post.find({})
     .populate("author", "firstName lastName email -_id")
     .sort({ date: "desc" })

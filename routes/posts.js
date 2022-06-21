@@ -6,6 +6,8 @@ const { verifyToken } = require("../middleware/verifyToken");
 
 router.get("/", postController.postsGET);
 
+router.get("/all", verifyToken, postController.allPostsGET);
+
 router.post("/", verifyToken, postController.postsPOST);
 
 router.get("/:postid", postController.singlePostGET);
