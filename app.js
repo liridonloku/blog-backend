@@ -11,6 +11,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const User = require("./models/user");
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const upload = multer();
 
 const mongoDb = process.env.MONGODB_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -67,6 +70,8 @@ passport.deserializeUser(function (id, done) {
 
 app.use(logger("dev"));
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(upload.array());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(compression());
