@@ -2,12 +2,12 @@ const Comment = require("../models/comment");
 const { body, validationResult } = require("express-validator");
 
 exports.commentsGET = (req, res, next) => {
-  Comment.find({ post: req.params.postid }, "userName content date").exec(
-    (err, comments) => {
+  Comment.find({ post: req.params.postid }, "userName content date")
+    .sort({ date: "desc" })
+    .exec((err, comments) => {
       if (err) return next(err);
       res.json(comments);
-    }
-  );
+    });
 };
 
 exports.commentsPOST = [
